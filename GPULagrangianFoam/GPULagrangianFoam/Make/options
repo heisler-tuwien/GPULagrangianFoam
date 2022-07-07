@@ -10,6 +10,6 @@ EXE_LIBS = \
     -llagrangian \
     -lgpulagrangian \
     -lfiniteVolume \
-    -lmeshTools \
-    -lthermophysicalFunctions \
-    -lradiation
+    -lmeshTools 
+    #-lthermophysicalFunctions \
+    #-lradiation

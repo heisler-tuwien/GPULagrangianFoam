@@ -52,7 +52,7 @@ inline Foam::gpuParticle::gpuParticle
     const vector& U
 )
 :
-    Particle<gpuParticle>(c, position, celli),
+    particle(c.pMesh(), position, celli),
     d_(d),
     U_(U)
 {}
@@ -103,6 +103,7 @@ inline Foam::vector& Foam::gpuParticle::U()
 {
     return U_;
 }
+
 
 
 // ************************************************************************* //

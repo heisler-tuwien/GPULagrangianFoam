@@ -29,13 +29,13 @@ License
 #include "volFields.H"
 #include "interpolationCellPoint.H"
 #include "meshSearch.H"
-#include "octree.H"
-#include "octreeDataCell.H"
+//ICHANGEDTHIS -> comment out deprecated library
+//#include "octree.H"
+//#include "octreeDataCell.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
 namespace Foam {
-
     defineParticleTypeNameAndDebug(gpuParticle, 0);
     defineTemplateTypeNameAndDebug(Cloud<gpuParticle>, 0);
 };
@@ -96,6 +96,7 @@ Foam::gpuParticleCloud::gpuParticleCloud(
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
 
+//ICHANGEDTHIS -> initially disabled
 void Foam::gpuParticleCloud::move(const dimensionedVector& g) {
 
     const volScalarField& rho = mesh_.lookupObject<const volScalarField>("rho");
@@ -108,7 +109,7 @@ void Foam::gpuParticleCloud::move(const dimensionedVector& g) {
 
     gpuParticle::trackData td(*this, rhoInterp, UInterp, nuInterp, g.value());
 
-    Cloud<gpuParticle>::move(td);
+    //Cloud<gpuParticle>::move(td);
 }
 
 void Foam::gpuParticleCloud::initGPU(bool validate) {
@@ -184,51 +185,53 @@ void Foam::gpuParticleCloud::initGPU(bool validate) {
 	initializeGPUTracking(*staticHostData, *timeDepHostData);
 }
 
-
+//Comment out, since octtree library does not exist any more
 void Foam::gpuParticleCloud::checkParticles() {
-
-	Info << "Validation enabled, checking particles.. " << nl;
-
-	// See genRandCloud.C for comments
-
-    treeBoundBox meshBb(mesh_.points());
-
-	scalar typDim = meshBb.avgDim()/(2.0*Foam::cbrt(scalar(mesh_.nCells())));
-
-	treeBoundBox bb (
-		meshBb.min(),
-		meshBb.max() + vector(typDim, typDim, typDim)
-	);
-
-	octreeDataCell shapes(mesh_);
-
-	octree<octreeDataCell> oc (
-		bb,  		// overall bounding box
-		shapes,     // all information needed to do checks on cells
-		1,          // min. levels
-		10.0,       // max. size of leaves
-		10.0        // maximum ratio of cubes v.s. cells
-	);
-
-	for(
-		gpuParticleCloud::iterator iter = this->begin();
-		iter != this->end();
-		++iter
-	){
-		gpuParticle& particle = iter();
-		// label expectedCell = mesh_.findCell(particle.position());
-		label expectedCell = oc.find(particle.position());
-
-		if(expectedCell != particle.cell() ) {
-
-			Info << "Particle claims to be in cell " << particle.cell()
-				 << nl;
-			Info << "But it's in cell " << expectedCell
-				 << nl;
-			Info << exit(FatalError);
-		}
-	}
+	Info << "checkParticles function currently without effect! ";
 }
+
+// 	Info << "Validation enabled, checking particles.. " << nl;
+
+// 	// See genRandCloud.C for comments
+
+//     treeBoundBox meshBb(mesh_.points());
+
+// 	scalar typDim = meshBb.avgDim()/(2.0*Foam::cbrt(scalar(mesh_.nCells())));
+
+// 	treeBoundBox bb (
+// 		meshBb.min(),
+// 		meshBb.max() + vector(typDim, typDim, typDim)
+// 	);
+
+// 	octreeDataCell shapes(mesh_);
+
+// 	octree<octreeDataCell> oc (
+// 		bb,  		// overall bounding box
+// 		shapes,     // all information needed to do checks on cells
+// 		1,          // min. levels
+// 		10.0,       // max. size of leaves
+// 		10.0        // maximum ratio of cubes v.s. cells
+// 	);
+
+// 	for(
+// 		gpuParticleCloud::iterator iter = this->begin();
+// 		iter != this->end();
+// 		++iter
+// 	){
+// 		gpuParticle& particle = iter();
+// 		// label expectedCell = mesh_.findCell(particle.position());
+// 		label expectedCell = oc.find(particle.position());
+
+// 		if(expectedCell != particle.cell() ) {
+
+// 			Info << "Particle claims to be in cell " << particle.cell()
+// 				 << nl;
+// 			Info << "But it's in cell " << expectedCell
+// 				 << nl;
+// 			Info << exit(FatalError);
+// 		}
+// 	}
+// }
 
 void Foam::gpuParticleCloud::moveGPU() {
 
@@ -284,7 +287,8 @@ void Foam::gpuParticleCloud::updateCloudObject() {
         particle.U().y() = U.at(i*4 + 1);
         particle.U().z() = U.at(i*4 + 2);
 
-        particle.cell() = occupancy.at(i);
+		//ICHANGEDTHIS -> reference getter to celli_ deprecated -> insert in solver! 
+        //particle.celli_ = occupancy.at(i);
 
         i++;
 	}

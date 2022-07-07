@@ -31,12 +31,14 @@ License
 
 Foam::gpuParticle::gpuParticle
 (
-    const Cloud<gpuParticle>& cloud,
+    //ICHANGEDHERE
+    //const Cloud<gpuParticle>& cloud,
+    const polyMesh& mesh,
     Istream& is,
     bool readFields
 )
 :
-    Particle<gpuParticle>(cloud, is, readFields)
+    particle(mesh, is, readFields)
 {
     if (readFields)
     {
@@ -89,7 +91,7 @@ void Foam::gpuParticle::readFields(Cloud<gpuParticle>& c)
 
 void Foam::gpuParticle::writeFields(const Cloud<gpuParticle>& c)
 {
-    Particle<gpuParticle>::writeFields(c);
+    particle::writeFields(c);
 
     label np = c.size();
 
@@ -117,13 +119,13 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const gpuParticle& p)
 {
     if (os.format() == IOstream::ASCII)
     {
-        os  << static_cast<const Particle<gpuParticle>&>(p)
+        os  << static_cast<const particle&>(p)
             << token::SPACE << p.d_
             << token::SPACE << p.U_;
     }
     else
     {
-        os  << static_cast<const Particle<gpuParticle>&>(p);
+        os  << static_cast<const particle&>(p);
         os.write
         (
             reinterpret_cast<const char*>(&p.d_),

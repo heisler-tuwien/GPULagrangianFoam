@@ -9,6 +9,6 @@ make
 mv libgputracking.so $FOAM_USER_LIBBIN
 cd ..
 wmake libso GPULagrangian
-#wmake GPULagrangianFoam
+wmake GPULagrangianFoam
 #wmake tests
 #wmake genRandCloud

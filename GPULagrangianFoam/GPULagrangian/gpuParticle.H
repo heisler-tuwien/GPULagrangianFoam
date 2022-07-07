@@ -58,7 +58,7 @@ class gpuParticleCloud;
 
 class gpuParticle
 :
-    public Particle<gpuParticle>
+    public particle
 {
     // Private member data
 
@@ -140,16 +140,16 @@ public:
         //- Construct from Istream
         gpuParticle
         (
-            const Cloud<gpuParticle>& c,
+            const polyMesh& mesh,
             Istream& is,
             bool readFields = true
         );
 
-        //- Construct and return a clone
-        autoPtr<gpuParticle> clone() const
-        {
-            return autoPtr<gpuParticle>(new gpuParticle(*this));
-        }
+        //- Construct and return a clone FIXTHIS
+        // virtual autoPtr<gpuParticle> clone() const
+        // {
+        //     return autoPtr<gpuParticle>(new gpuParticle(*this));
+        // }
 
 
     // Member Functions
@@ -168,6 +168,7 @@ public:
 
             inline label id() const
             { return id_; }
+            
 
             // inline label& id()
             // { return id_; }

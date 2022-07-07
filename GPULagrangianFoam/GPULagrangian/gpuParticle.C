@@ -33,7 +33,8 @@ bool Foam::gpuParticle::move(gpuParticle::trackData& td) {
     td.switchProcessor = false;
     td.keepParticle = true;
 
-    const polyMesh& mesh = cloud().pMesh();
+    //ICHANGEDTHIS
+    const polyMesh& mesh = td.spc().mesh();
     const polyBoundaryMesh& pbMesh = mesh.boundaryMesh();
 
     scalar deltaT = mesh.time().deltaT().value();
@@ -60,7 +61,7 @@ bool Foam::gpuParticle::move(gpuParticle::trackData& td) {
         // since this will change if a face is hit
         label celli = cell();
 
-        dt *= trackToFace(position() + dt*U_, td);
+        dt *= trackToFace(position() + dt*U_, stepFraction());
 
         if (debug) { // Note that the position is updated by trackToFace(..)
         	Info << "    Pos at the end " << position() << nl;
@@ -105,12 +106,13 @@ bool Foam::gpuParticle::move(gpuParticle::trackData& td) {
         	U_ = U_ + 0.5 * mesh.lookupObject<const volVectorField>("U")[celli];
         }
 
-        if (onBoundary() && td.keepParticle)
+        if (onBoundaryFace() && td.keepParticle)
         {
             // Bug fix.  HJ, 25/Aug/2010
             if (face() > -1)
             {
-                if (isType<processorPolyPatch>(pbMesh[patch(face())]))
+                // ICHANGEDTHIS if (isType<processorPolyPatch>(pbMesh[patch(face())]))
+                if (isType<processorPolyPatch>(pbMesh[patch()]))
                 {
                     td.switchProcessor = true;
                 }
@@ -226,14 +228,14 @@ void Foam::gpuParticle::hitPatch
 
 void Foam::gpuParticle::transformProperties(const tensor& T)
 {
-    Particle<gpuParticle>::transformProperties(T);
+    particle::transformProperties(T);
     U_ = transform(T, U_);
 }
 
 
 void Foam::gpuParticle::transformProperties(const vector& separation)
 {
-    Particle<gpuParticle>::transformProperties(separation);
+    particle::transformProperties(separation);
 }
 
 
