@@ -39,7 +39,7 @@ SourceFiles
 #ifndef gpuParticle_H
 #define gpuParticle_H
 
-#include "Particle.H"
+#include "particle.H"
 #include "IOstream.H"
 #include "autoPtr.H"
 #include "interpolationCellPoint.H"

@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/phobos/Documents/GPULagrangianFoam/GPULagrangianFoam'
+make: Leaving directory '/home/phobos/Documents/GPULagrangianFoam/GPULagrangianFoam'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+
